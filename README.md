@@ -6,3 +6,4 @@ If the structure is enough big to be considered infinite, the Green's functions 
 in terms of an orthogonal basis such as Chebyshev polynomial. Here the KPM technique is 
 implemented for fast computation of Green's function and features line DOS. The Hamiltonian
 is written using the tight-binding approximation. 
+Details of the method :
