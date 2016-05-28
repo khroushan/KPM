@@ -4,13 +4,13 @@ using namespace std;
 #include <fstream> // io file lib
 #include <iomanip> // text formatting
 #include <cmath>
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 const double pi = 4.0 * atan(1.0);
 
 // Jackson kernel to smooth the Cheb polynomials
 // to avoid the Gibbs oscillation
-inline double j_kernel(int Max, int i){
+double j_kernel(int Max, int i){
   double aux = ( (double) 1/(Max + 1) ) * ( ( Max - i + 1 ) *	\
 	       cos( (double) i * pi / ( Max + 1 ) ) + \
 	       sin( (double) i * pi / ( Max + 1 ) ) / tan( pi / (Max+1) ));
@@ -20,11 +20,11 @@ inline double j_kernel(int Max, int i){
 int main(){
   
 
-  const int N_num = 1000; // number of Chbychev terms
-  double x, x_a, delta; // x , and a value to expand the delta-function
-  double chx, cha[N_num];
+  const int N_num = 1000;    // number of Chbychev terms
+  double x, x_a, delta;      // x , and a value to expand the delta-function
+  double chx, cha[N_num];    // static array
   double x_i = -0.2, x_f = 0.2;
-  int steps = 500;   // steps for x
+  int steps = 500;           // number of steps
   string junk;
   
   // Reading inital parameters
@@ -32,17 +32,20 @@ int main(){
   in_file >> x_i >> x_f >> junk;
   in_file >> steps >> junk;
   in_file.close();
+  // print the initial values
   cout << "x_i = " << x_i << "   x_f =  " << x_f << endl;
   cout << "steps = " << steps << junk << endl;
+  // 
   double dx = (x_f - x_i)/steps;
 
   ofstream out_file("k2_delta.dat", ios::out);
   // kind 2
   x_a = 0.0;
-  for (int i = 0; i < N_num; i++){ // generating U_n(a)
-    cha[i] = sin( (i+1) * acos(x_a) ) / sin( acos(x_a) );
-  }
-  
+  for (int i = 0; i < N_num; i++) // generating U_n(a)
+    {
+      cha[i] = sin( (i+1) * acos(x_a) ) / sin( acos(x_a) );
+    }
+
   for (int j = 0; j < steps; j++ ){
     x = x_i + j * dx;
     delta = 0.0;
