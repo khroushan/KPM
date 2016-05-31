@@ -10,6 +10,7 @@
 // Date   : May 27 2016
 //============================================================
 #include <iostream>
+#include <iomanip>
 using namespace std;
 
 class SprsMtx
@@ -23,6 +24,8 @@ public:
   // then define operator overloading for sparse mtrx-mtrx multiplication
   
   void sget() const;
+  void cnvt2D() const;
+  //  void mtxPrint() const;
 
 private:
   int dim, nnZero;
@@ -76,19 +79,53 @@ void SprsMtx:: sget() const {
   cout << endl;
 }
 
+void SprsMtx::cnvt2D()const{
+  // allocate a 2D vector with dim x dim dimension
+  // initialize it with zero
+  double * mtx2D;
+  mtx2D = new double [dim*dim];
+  for (int i = 0; i < dim; ++i){
+    for (int j = 0; j < dim; ++j){
+      mtx2D[i*dim +j] = 0.d;
+    }
+  }
+  // fill with non-zero elemetns
+  for (int i = 0; i < nnZero; ++i){
+    mtx2D[indx[i]*dim + jndx[i]] = mtx_elmt[i];
+  }
+
+  for (int i = 0; i < dim; ++i){
+    for (int j = 0; j < dim; ++j){
+      cout << setw(3) << mtx2D[i*dim +j] ;
+    }
+    cout << endl;
+  }
+
+  delete [] mtx2D;
+}
+
+// void mtxPrint() const{
+//   for (int i = 0; i < dim; ++i){
+//     for (int j = 0; j < dim; ++j){
+      
 
 int main(){
-  
-  SprsMtx mtx1(10,5);
+  int dim = 10;
+  int nnz = 5;
+  SprsMtx smtx1(dim,nnz);
 
   // example of indx and jndx
   int indx[5] = {1,2,3,4,5};
   int jndx[5] = {1,2,3,4,5};
   double mtx[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
 
-  mtx1.init(indx, jndx, mtx,5);
+  smtx1.init(indx, jndx, mtx,nnz);
   
-  mtx1.sget();
-  return 0;
-  cout << "Just small change\n";
+  smtx1.sget();
+  
+  // double *mtx1 = new double [dim*dim];
+  smtx1.cnvt2D();
+
+
+return 0;
 }
