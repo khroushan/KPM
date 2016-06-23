@@ -1,0 +1,63 @@
+using namespace std;
+
+#include <iostream>
+#include <fstream> // io file 
+#include <iomanip> // text formatting
+#include <cmath>
+#include <stdio.h>
+const double pi = 4.0 * atan(1.0);
+inline double j_kernel(int Max, int i){
+  double aux = ( (double) 1/(Max + 1) ) * ( ( Max - i + 1 ) *	\
+	       cos( (double) i * pi / ( Max + 1 ) ) + \
+	       sin( (double) i * pi / ( Max + 1 ) ) / tan( pi / (Max+1) ));
+  return aux;}
+
+int main(){
+  
+
+  const int N_num = 1000; // number of Chbychev terms
+  double x, x_a, delta; // x , and a value to expand the delta-function
+  double chx, cha[N_num];
+  const double x_i = -0.2, x_f = 0.2;
+  const int steps = 500;   // steps for x
+  const double dx = (x_f - x_i)/steps;
+  ofstream out_file("k2_delta.dat", ios::out);
+  // kind 2
+  x_a = 0.0;
+  for (int i = 0; i < N_num; i++){ // generating U_n(a)
+    cha[i] = sin( (i+1) * acos(x_a) ) / sin( acos(x_a) );
+  }
+  
+  for (int j = 0; j < steps; j++ ){
+    x = x_i + j * dx;
+    delta = 0.0;
+    for (int i = 0; i < N_num; i++) {
+      chx = sin( (i+1) * acos(x) ) / sin( acos(x) );
+      delta += cha[i] * chx * j_kernel(N_num,i);
+    }
+    delta *= ((double) 2/pi);
+    out_file <<  setw(4) << setprecision(4) <<  x << "   " <<  setw(5) << fixed << setprecision(5) << delta << endl;
+  }
+  
+  out_file.close();
+
+  out_file.open("k1_delta.dat", ios :: out);
+  // kind 1
+  for (int i = 0; i < N_num; i++) { // generating T_n(x)
+    cha[i] = cos( i * acos(x_a) ) ;
+  }
+
+  for (int j = 0; j < steps; j++){
+    x = x_i + j * dx;
+    delta = 0.0;
+    for(int i = 1; i < N_num; i++){ // second kind m = 0, m != 0
+      chx = cos( i * acos(x) );
+      delta += cha[i] * chx * j_kernel(N_num,i);
+    }
+    delta = (2.0 * delta + 1.0 * j_kernel(N_num,0) ) / pi;
+    out_file <<  setw(8) << setprecision(4) <<  x << "   " <<  setw(8) << fixed << setprecision(5) << delta << endl;
+  }
+  out_file.close();
+  return 0;
+  
+}
