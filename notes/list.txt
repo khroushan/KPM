@@ -1,0 +1,2 @@
+- note on DOS for honeycomb and square lattices, seperately
+- 
